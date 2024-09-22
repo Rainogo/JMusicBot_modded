@@ -27,6 +27,15 @@ A cross-platform Discord music bot with a clean interface, and that is easy to s
   * Supports local files
   * Playlist support (both web/youtube, and local)
 
+## This fork adds
+  * Spotify command: Supports Spotify's tracks and playlists
+  * Servers command: Lists all servers the bot is connected to
+  * LeaveServer command: Forces the bot to leave a server
+  * Random command: Automatically shuffles the playlist before playing
+  * Alone command: Now wheather the bot stays in the voice channel after the queue is empty or nobody is listening can be toggled on and off for each server (if alonetimeuntilstop = 0 and stayinchannel = true)
+  * Implemented jagrosh's OAuth2 branch
+  * Minimum changes to original files to keep it maintainable
+
 ## Supported sources and formats
 JMusicBot supports all sources and formats supported by [lavaplayer](https://github.com/sedmelluq/lavaplayer#supported-formats):
 ### Sources

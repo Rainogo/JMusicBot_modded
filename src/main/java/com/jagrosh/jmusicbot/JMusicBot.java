@@ -202,6 +202,7 @@ public class JMusicBot
                         new SeekCmd(bot),
                         new ShuffleCmd(bot),
                         new SkipCmd(bot),
+                        new RandomCmd(bot), //fork
 
                         new ForceRemoveCmd(bot),
                         new ForceskipCmd(bot),
@@ -219,6 +220,7 @@ public class JMusicBot
                         new SkipratioCmd(bot),
                         new SettcCmd(bot),
                         new SetvcCmd(bot),
+                        new AloneCmd(bot), //fork
 
                         new AutoplaylistCmd(bot),
                         new DebugCmd(bot),
@@ -227,7 +229,10 @@ public class JMusicBot
                         new SetgameCmd(bot),
                         new SetnameCmd(bot),
                         new SetstatusCmd(bot),
-                        new ShutdownCmd(bot)
+                        new ShutdownCmd(bot),
+                        new LeaveServerCmd(bot), //fork
+                        new ServersCmd(bot), //fork
+                        new SpotifyCmd(bot) //fork
                 );
         
         // enable eval if applicable

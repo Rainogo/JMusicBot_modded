@@ -16,6 +16,7 @@
 package com.jagrosh.jmusicbot.audio;
 
 import com.jagrosh.jmusicbot.Bot;
+import com.jagrosh.jmusicbot.settings.Settings;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 
@@ -23,6 +24,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.*;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -71,9 +73,29 @@ public class AloneInVoiceHandler
         toRemove.forEach(id -> aloneSince.remove(id));
     }
 
+    private void check(boolean a)
+    {
+        aloneSince.keySet().forEach(guildId -> {
+            Guild guild = bot.getJDA().getGuildById(guildId);
+
+            if (guild == null) {
+                aloneSince.remove(guildId);
+                return;
+            }
+
+            AudioHandler audioHandler = (AudioHandler) guild.getAudioManager().getSendingHandler();
+            if (audioHandler != null) {
+                audioHandler.stopAndClear();
+                guild.getAudioManager().closeAudioConnection();
+            }
+
+            aloneSince.remove(guildId);
+        });
+    }
+
     public void onVoiceUpdate(GuildVoiceUpdateEvent event)
     {
-        if(aloneTimeUntilStop <= 0) return;
+        //if(aloneTimeUntilStop <= 0) return;
 
         Guild guild = event.getEntity().getGuild();
         if(!bot.getPlayerManager().hasHandler(guild)) return;
@@ -81,10 +103,29 @@ public class AloneInVoiceHandler
         boolean alone = isAlone(guild);
         boolean inList = aloneSince.containsKey(guild.getIdLong());
 
-        if(!alone && inList)
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        assert handler != null;
+
+        boolean shouldStay = Objects.requireNonNull(handler.getManager().getBot().getSettingsManager().getSettings(guild)).getServerAloneQuit();
+
+        if(!alone && inList){
+            if(aloneTimeUntilStop <= 0)
+                handler.getPlayer().setPaused(false); //fork
             aloneSince.remove(guild.getIdLong());
-        else if(alone && !inList)
+        }
+        else if(alone && !inList){
+            if(aloneTimeUntilStop <= 0){
+                if(handler.getPlayer().isPaused())
+                {
+                    return;
+                }
+                handler.getPlayer().setPaused(true); //fork
+            }
             aloneSince.put(guild.getIdLong(), Instant.now());
+            if(!shouldStay){
+                check(true);
+            }
+        }
     }
 
     private boolean isAlone(Guild guild)
@@ -93,6 +134,6 @@ public class AloneInVoiceHandler
         return guild.getAudioManager().getConnectedChannel().getMembers().stream()
                 .noneMatch(x ->
                         !x.getVoiceState().isDeafened()
-                        && !x.getUser().isBot());
+                                && !x.getUser().isBot());
     }
 }

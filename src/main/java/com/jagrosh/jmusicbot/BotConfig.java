@@ -42,13 +42,17 @@ public class BotConfig
     private String token, prefix, altprefix, helpWord, playlistsFolder, logLevel,
             successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji,
             evalEngine;
-    private boolean stayInChannel, songInGame, npImages, updatealerts, useEval, dbots;
+    private boolean youtubeOauth2, stayInChannel, songInGame, npImages, updatealerts, useEval, dbots;
     private long owner, maxSeconds, aloneTimeUntilStop;
     private int maxYTPlaylistPages;
     private double skipratio;
     private OnlineStatus status;
     private Activity game;
     private Config aliases, transforms;
+
+    //fork
+    private String spClientId;
+    private String spClientSecret;
 
     private boolean valid = false;
     
@@ -84,6 +88,7 @@ public class BotConfig
             searchingEmoji = config.getString("searching");
             game = OtherUtil.parseGame(config.getString("game"));
             status = OtherUtil.parseStatus(config.getString("status"));
+            youtubeOauth2 = config.getBoolean("youtubeoauth2");
             stayInChannel = config.getBoolean("stayinchannel");
             songInGame = config.getBoolean("songinstatus");
             npImages = config.getBoolean("npimages");
@@ -98,6 +103,10 @@ public class BotConfig
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
             skipratio = config.getDouble("skipratio");
+
+            spClientId = config.getString("spclient");  //fork
+            spClientSecret = config.getString("spsecret");  //fork
+
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -293,6 +302,11 @@ public class BotConfig
         return helpWord;
     }
     
+    public boolean useYoutubeOauth2()
+    {
+        return youtubeOauth2;
+    }
+    
     public boolean getStay()
     {
         return stayInChannel;
@@ -376,6 +390,10 @@ public class BotConfig
             return new String[0];
         }
     }
+
+    //fork
+    public String getSpotifyClientId(){return spClientId;}
+    public String getSpotifyClientSecret(){return spClientSecret;}
     
     public Config getTransforms()
     {

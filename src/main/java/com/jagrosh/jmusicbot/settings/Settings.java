@@ -39,6 +39,7 @@ public class Settings implements GuildSettingsProvider
     private QueueType queueType;
     private String prefix;
     private double skipRatio;
+    private boolean serverAloneQuit; //
 
     public Settings(SettingsManager manager, String textId, String voiceId, String roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, QueueType queueType)
     {
@@ -73,6 +74,7 @@ public class Settings implements GuildSettingsProvider
         this.prefix = prefix;
         this.skipRatio = skipRatio;
         this.queueType = queueType;
+        this.serverAloneQuit = false; //fork
     }
     
     public Settings(SettingsManager manager, long textId, long voiceId, long roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, QueueType queueType)
@@ -87,6 +89,7 @@ public class Settings implements GuildSettingsProvider
         this.prefix = prefix;
         this.skipRatio = skipRatio;
         this.queueType = queueType;
+        this.serverAloneQuit = false; //fork
     }
     
     // Getters
@@ -194,5 +197,17 @@ public class Settings implements GuildSettingsProvider
     {
         this.queueType = queueType;
         this.manager.writeSettings();
+    }
+
+    //fork
+    public void setServerAloneQuit(boolean serverAloneQuit)
+    {
+        this.serverAloneQuit = serverAloneQuit;
+        this.manager.writeSettings();
+    }
+
+    public boolean getServerAloneQuit()
+    {
+        return serverAloneQuit;
     }
 }
