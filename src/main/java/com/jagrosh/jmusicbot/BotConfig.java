@@ -399,4 +399,9 @@ public class BotConfig
     {
         return transforms;
     }
+
+    public boolean isSpotifyEnabled() {
+        return !getSpotifyClientId().isEmpty() && !getSpotifyClientSecret().isEmpty();
+    }
+
 }

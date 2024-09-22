@@ -16,6 +16,7 @@
 package com.jagrosh.jmusicbot.audio;
 
 import com.dunctebot.sourcemanagers.DuncteBotSources;
+import com.github.topi314.lavasrc.spotify.SpotifySourceManager;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerRegistry;
@@ -96,6 +97,13 @@ public class PlayerManager extends DefaultAudioPlayerManager
         registerSourceManager(new NicoAudioSourceManager());
         registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
 
+        if (bot.getConfig().isSpotifyEnabled()) {
+            final SpotifySourceManager spotify = new SpotifySourceManager(null, bot.getConfig().getSpotifyClientId(), bot.getConfig().getSpotifyClientSecret(), "DE", this);
+            spotify.setPlaylistPageLimit(18);
+            spotify.setAlbumPageLimit(18);
+            registerSourceManager(spotify);
+
+        }
         AudioSourceManagers.registerLocalSource(this);
 
         DuncteBotSources.registerAll(this, "en-US");

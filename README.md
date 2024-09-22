@@ -28,7 +28,7 @@ A cross-platform Discord music bot with a clean interface, and that is easy to s
   * Playlist support (both web/youtube, and local)
 
 ## This fork adds
-  * Spotify command: Supports Spotify's tracks and playlists
+  * Spotify support: Supports tracks and playlists (only urls)
   * Servers command: Lists all servers the bot is connected to
   * LeaveServer command: Forces the bot to leave a server
   * Random command: Automatically shuffles the playlist before playing

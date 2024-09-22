@@ -231,8 +231,7 @@ public class JMusicBot
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot),
                         new LeaveServerCmd(bot), //fork
-                        new ServersCmd(bot), //fork
-                        new SpotifyCmd(bot) //fork
+                        new ServersCmd(bot) //fork
                 );
         
         // enable eval if applicable

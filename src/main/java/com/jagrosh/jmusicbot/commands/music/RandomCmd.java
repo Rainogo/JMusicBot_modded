@@ -22,6 +22,12 @@ import net.dv8tion.jda.api.exceptions.PermissionException;
 
 import java.util.concurrent.TimeUnit;
 
+import com.github.topi314.lavasrc.spotify.SpotifySourceManager;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RandomCmd extends MusicCommand {
     private final static String LOAD = "\uD83D\uDCE5"; // 📥
     private final static String CANCEL = "\uD83D\uDEAB"; // 🚫
@@ -44,7 +50,23 @@ public class RandomCmd extends MusicCommand {
     @Override
     public void doCommand(CommandEvent event)
     {
-        if(event.getArgs().isEmpty() && event.getMessage().getAttachments().isEmpty())
+        try {
+            // Spotify Workaround
+            final Matcher spotifyMatcher = SpotifySourceManager.URL_PATTERN.matcher(event.getArgs());
+            if (spotifyMatcher.find()) {
+                final Field argField = event.getClass().getDeclaredField("args");
+                argField.setAccessible(true);
+                final String arg = (String) argField.get(event);
+                final String region = spotifyMatcher.group("region");
+                if (region == null || region.isEmpty()) {
+                    argField.set(event, arg.replace("spotify.com/", "spotify.com/intl/"));
+                } else if (!region.equals("intl")) argField.set(event, arg.replace(region, "intl"));
+            }
+
+        } catch (Exception ignored) {
+        }
+        String argsIn = event.getArgs();
+        if(argsIn.isEmpty() && event.getMessage().getAttachments().isEmpty())
         {
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
             if(handler.getPlayer().getPlayingTrack()!=null && handler.getPlayer().isPaused())
@@ -239,6 +261,26 @@ public class RandomCmd extends MusicCommand {
                 return;
             }
             PlaylistLoader.Playlist playlist = bot.getPlaylistLoader().getPlaylist(event.getArgs());
+
+            for (int i = 0; i < playlist.getItems().size(); i++) {
+                String item = playlist.getItems().get(i);
+                String modifiedItem = item; // Start with the original item
+
+                // Apply Spotify workaround
+                final Matcher spotifyMatcher = SpotifySourceManager.URL_PATTERN.matcher(item);
+                if (spotifyMatcher.find()) {
+                    String region = spotifyMatcher.group("region");
+                    if (region == null || region.isEmpty()) {
+                        modifiedItem = item.replace("spotify.com/", "spotify.com/intl/");
+                    } else if (!region.equals("intl")) {
+                        modifiedItem = item.replace(region, "intl");
+                    }
+                }
+
+                // Update the item in the existing playlist
+                playlist.getItems().set(i, modifiedItem);
+            }
+
             if(playlist==null)
             {
                 event.replyError("I could not find `"+event.getArgs()+".txt` in the Playlists folder.");
